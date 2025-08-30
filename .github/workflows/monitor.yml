@@ -1,0 +1,28 @@
+name: Website Monitor
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"   # كل 5 دقائق
+  workflow_dispatch:        # يسمح لك تشغله يدويًا من GitHub
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Run monitor
+        run: |
+          python - << 'EOF'
+          import requests, datetime
+
+          URL = "https://telegram-wisdom.preview.emergentagent.com/"
+
+          try:
+              r = requests.get(URL, timeout=10)
+              print(f"[{datetime.datetime.now()}] ✔ {URL} - Status: {r.status_code}")
+          except Exception as e:
+              print(f"[{datetime.datetime.now()}] ✘ Error visiting {URL}: {e}")
+          EOF
